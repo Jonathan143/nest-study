@@ -92,6 +92,8 @@ export class PostsController {
    */
   @ApiOperation({ summary: '删除文章' })
   @Delete(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   async remove(@Param('id') id) {
     return await this.postsService.remove(id)
   }

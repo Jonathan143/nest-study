@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty } from 'class-validator'
+import { IsNotEmpty, Length, IsEmail, IsOptional, IsUrl } from 'class-validator'
 
 export class CreateUserDto {
   @ApiProperty({ description: '用户名' })
   @IsNotEmpty({ message: '请输入用户名' })
+  @Length(2, 100, { message: '用户名长度为2-100字符' })
   username: string
 
   @ApiProperty({ description: '密码' })
@@ -12,4 +13,17 @@ export class CreateUserDto {
 
   @ApiProperty({ description: '用户角色' })
   role: string
+
+  @ApiProperty({ description: '用户邮箱', default: 'test@email.com' })
+  @IsOptional()
+  @IsEmail()
+  email: string
+
+  @ApiProperty({
+    description: '用户头像',
+    default: 'https://test.com/avatar.png',
+  })
+  @IsOptional()
+  @IsUrl()
+  avatar: string
 }

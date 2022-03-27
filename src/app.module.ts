@@ -24,6 +24,7 @@ import { TagModule } from './tag/tag.module'
         database: configService.get('DB_DATABASE', 'blog'),
         // charset: 'utf8mb4',
         timezone: '+08:00',
+        // 根据实体自动创建数据库表，生产环境建议关闭
         synchronize: true,
         autoLoadEntities: true,
       }),
