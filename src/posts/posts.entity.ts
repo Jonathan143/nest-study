@@ -1,5 +1,5 @@
-import { TagEntity } from './../tag/entities/tag.entity'
-import { CategoryEntity } from './../category/entities/category.entity'
+import { TagEntity } from '@/tag/entities/tag.entity'
+import { CategoryEntity } from '@/category/entities/category.entity'
 import { User } from 'src/user/entities/user.entity'
 import {
   Column,

@@ -9,6 +9,10 @@ import {
 import * as bcrypt from 'bcryptjs'
 import { ApiProperty } from '@nestjs/swagger'
 import { PostsEntity } from 'src/posts/posts.entity'
+
+export type RoleItem = 'root' | 'author' | 'visitor'
+export const roles: RoleItem[] = ['root', 'author', 'visitor']
+
 @Entity('user')
 export class User {
   @ApiProperty({ description: '用户id' })
@@ -34,7 +38,7 @@ export class User {
   @Column({ default: null })
   openid: string
 
-  @Column('enum', { enum: ['root', 'author', 'visitor'], default: 'visitor' })
+  @Column('enum', { enum: roles, default: 'visitor' })
   role: string
 
   @OneToMany(() => PostsEntity, post => post.author)

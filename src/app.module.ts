@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { APP_GUARD } from '@nestjs/core'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { PostsModule } from './posts/posts.module'
@@ -9,6 +10,8 @@ import { UserModule } from './user/user.module'
 import { AuthModule } from './auth/auth.module'
 import { CategoryModule } from './category/category.module'
 import { TagModule } from './tag/tag.module'
+import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard'
+import { RolesGuard } from '@/auth/guard/role.guard'
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: [envConfig.path] }),
@@ -36,6 +39,16 @@ import { TagModule } from './tag/tag.module'
     TagModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AppModule {}

@@ -21,3 +21,18 @@ export class UserInfoDto {
   @ApiProperty({ description: '创建时间' })
   createTime: Date
 }
+
+export class UserInfoResponse {
+  @ApiProperty({ description: '状态码', example: 0 })
+  code: number
+
+  @ApiProperty({
+    description: '数据',
+    type: () => UserInfoDto,
+    example: UserInfoDto,
+  })
+  data: UserInfoDto
+
+  @ApiProperty({ description: '请求结果信息', example: '请求成功' })
+  message: string
+}

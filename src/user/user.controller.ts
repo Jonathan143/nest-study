@@ -21,8 +21,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
-import { UserInfoDto } from './dto/user-info.dto'
-import { AuthGuard } from '@nestjs/passport'
+import { UserInfoResponse } from './dto/user-info.dto'
+import { NoAuth, Roles } from '@/core/decorator/customize'
 
 @ApiTags('用户')
 @Controller('user')
@@ -30,8 +30,9 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @ApiOperation({ summary: '注册用户' })
-  @ApiResponse({ status: 201, type: UserInfoDto })
+  @ApiResponse({ status: 201, type: UserInfoResponse })
   @UseInterceptors(ClassSerializerInterceptor)
+  @NoAuth()
   @Post('register')
   register(@Body() createUser: CreateUserDto) {
     return this.userService.register(createUser)
@@ -39,7 +40,6 @@ export class UserController {
 
   @ApiOperation({ summary: '获取用户信息' })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
   @Get()
   async getUserInfo(@Req() req) {
     return req.user
@@ -47,22 +47,20 @@ export class UserController {
 
   @Get(':id')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id)
   }
 
   @Patch(':id')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto)
+    return this.userService.update(id, updateUserDto)
   }
 
   @Delete(':id')
+  @Roles('root')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
   remove(@Param('id') id: string) {
-    return this.userService.remove(+id)
+    return this.userService.remove(id)
   }
 }

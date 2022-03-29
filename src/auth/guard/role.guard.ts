@@ -7,8 +7,9 @@ import {
 } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Reflector } from '@nestjs/core'
+import { RoleItem } from '@/user/entities/user.entity'
 
-export const Roles = (...roles: string[]) => SetMetadata('roles', roles)
+export const Roles = (...roles: RoleItem[]) => SetMetadata('roles', roles)
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -18,20 +19,15 @@ export class RolesGuard implements CanActivate {
   ) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const roles = this.reflector.get('roles', context.getHandler())
-    if (!roles) {
-      return true
-    }
+    const roles = this.reflector.get<RoleItem[]>('roles', context.getHandler())
+    if (!roles) return true
 
     const req = context.switchToHttp().getRequest()
     const user = req.user
-    if (!user) {
-      return false
-    }
+    if (!user) return false
+
     const hasRoles = roles.some(role => role === user.role)
-    if (!hasRoles) {
-      throw new UnauthorizedException('您没有权限')
-    }
+    if (!hasRoles) throw new UnauthorizedException('您没有权限')
     return hasRoles
   }
 }

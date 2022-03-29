@@ -13,10 +13,9 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
-import { AuthGuard } from '@nestjs/passport'
-import { urlencoded } from 'express'
 import * as urlencode from 'urlencode'
 import { WechatLoginDto } from './dto/wechat-login.dto'
+import { NoAuth } from '@/core/decorator/customize'
 
 @ApiTags('验证')
 @Controller('auth')
@@ -24,7 +23,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @ApiOperation({ summary: '登录' })
-  @UseGuards(AuthGuard('local'))
+  @NoAuth()
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('login')
   async login(@Body() user: LoginDto, @Req() req) {
@@ -32,6 +31,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: '微信登录跳转' })
+  @NoAuth()
   @Get('wechatLogin')
   async wechatLogin(@Headers() header, @Res() res) {
     const APPID = process.env.APPID
@@ -43,6 +43,7 @@ export class AuthController {
 
   @ApiOperation({ summary: '微信登录' })
   @ApiBody({ type: WechatLoginDto, required: true })
+  @NoAuth()
   @Post('wechat')
   async loginWithWechat(@Body('code') code: string) {
     return this.authService.loginWithWechat(code)

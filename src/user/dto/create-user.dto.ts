@@ -1,5 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, Length, IsEmail, IsOptional, IsUrl } from 'class-validator'
+import {
+  IsNotEmpty,
+  Length,
+  IsEmail,
+  IsOptional,
+  IsUrl,
+  IsIn,
+} from 'class-validator'
+import { roles } from '../entities/user.entity'
 
 export class CreateUserDto {
   @ApiProperty({ description: '用户名' })
@@ -11,7 +19,8 @@ export class CreateUserDto {
   @IsNotEmpty({ message: '请输入密码' })
   password: string
 
-  @ApiProperty({ description: '用户角色' })
+  @ApiProperty({ description: '用户角色', default: 'visitor' })
+  @IsIn(roles, { message: '用户权限配置错误' })
   role: string
 
   @ApiProperty({ description: '用户邮箱', default: 'test@email.com' })

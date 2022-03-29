@@ -13,8 +13,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { CreatePostDto, PostsRo } from './dto/post.dto'
-import { AuthGuard } from '@nestjs/passport'
-import { RolesGuard, Roles } from './../auth/role.guard'
+import { NoAuth, Roles } from '@/core/decorator/customize'
 
 @ApiTags('文章')
 @Controller('post')
@@ -27,8 +26,7 @@ export class PostsController {
   @ApiOperation({ summary: '创建文章' })
   @ApiBearerAuth()
   @Post()
-  @Roles('admin', 'root')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('root')
   async create(@Body() post: CreatePostDto, @Req() req) {
     return await this.postsService.create(req.user, post)
   }
@@ -37,6 +35,7 @@ export class PostsController {
    * 获取所有文章
    */
   @ApiOperation({ summary: '获取文章列表' })
+  @NoAuth()
   @Get('/list')
   async findAll(
     @Query() query,
@@ -49,6 +48,7 @@ export class PostsController {
    * 获取归档列表
    */
   @ApiOperation({ summary: '归档日期列表' })
+  @NoAuth()
   @Get('/archives')
   getArchives() {
     return this.postsService.getArchives()
@@ -58,6 +58,7 @@ export class PostsController {
    * 获取文章归档
    */
   @ApiOperation({ summary: '文章归档' })
+  @NoAuth()
   @Get('/archives/list')
   getArchiveList(@Query('time') time: string) {
     return this.postsService.getArchiveList(time)
@@ -68,6 +69,7 @@ export class PostsController {
    * @param id
    */
   @ApiOperation({ summary: '获取指定文章' })
+  @NoAuth()
   @Get(':id')
   async findById(@Param('id') id: string) {
     return await this.postsService.findById(id)
@@ -81,7 +83,6 @@ export class PostsController {
   @ApiOperation({ summary: '更新指定文章' })
   @ApiBearerAuth()
   @Put(':id')
-  @UseGuards(AuthGuard('jwt'))
   async update(@Param('id') id: number, @Body() post: CreatePostDto) {
     return await this.postsService.updateById(id, post)
   }
@@ -93,7 +94,6 @@ export class PostsController {
   @ApiOperation({ summary: '删除文章' })
   @Delete(':id')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
   async remove(@Param('id') id) {
     return await this.postsService.remove(id)
   }

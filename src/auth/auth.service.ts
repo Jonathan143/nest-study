@@ -1,8 +1,8 @@
-import { UserService } from './../user/user.service'
+import { UserService } from '@/user/user.service'
 import { Injectable, BadRequestException, HttpException } from '@nestjs/common'
 import { HttpService } from '@nestjs/axios'
 import { JwtService } from '@nestjs/jwt'
-import { User } from '../user/entities/user.entity'
+import { User } from '@/user/entities/user.entity'
 import {
   AccessTokenInfo,
   AccessConfig,
