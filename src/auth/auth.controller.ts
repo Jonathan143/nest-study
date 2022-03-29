@@ -16,6 +16,7 @@ import {
 import * as urlencode from 'urlencode'
 import { WechatLoginDto } from './dto/wechat-login.dto'
 import { NoAuth } from '@/core/decorator/customize'
+import { AuthGuard } from '@nestjs/passport'
 
 @ApiTags('验证')
 @Controller('auth')
@@ -24,6 +25,7 @@ export class AuthController {
 
   @ApiOperation({ summary: '登录' })
   @NoAuth()
+  @UseGuards(AuthGuard('local'))
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('login')
   async login(@Body() user: LoginDto, @Req() req) {

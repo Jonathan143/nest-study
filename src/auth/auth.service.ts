@@ -31,8 +31,8 @@ export class AuthService {
       username: user.username,
       role: user.role,
     })
-
-    return { token }
+    delete user.password
+    return { token, ...user }
   }
 
   async loginWithWechat(code) {
