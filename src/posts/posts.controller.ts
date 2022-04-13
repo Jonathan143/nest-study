@@ -1,5 +1,4 @@
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger'
-import { PostsService } from './posts.service'
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import {
   Body,
   Controller,
@@ -12,6 +11,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common'
+import { PostsService } from './posts.service'
 import { CreatePostDto, PostsRo } from './dto/post.dto'
 import { NoAuth, Roles } from '@/core/decorator/customize'
 
@@ -39,11 +39,12 @@ export class PostsController {
   @Get('/list')
   async findAll(
     @Query() query,
-    @Query('pageSize') pageSize: number,
-    @Query('pageNum') pageNum: number,
+      @Query('pageSize') pageSize: number,
+      @Query('pageNum') pageNum: number,
   ): Promise<PostsRo> {
     return await this.postsService.findAll(query)
   }
+
   /**
    * 获取归档列表
    */

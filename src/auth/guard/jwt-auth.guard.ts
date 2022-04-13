@@ -1,7 +1,7 @@
 import {
-  Injectable,
-  ExecutionContext,
   CanActivate,
+  ExecutionContext,
+  Injectable,
   SetMetadata,
   UnauthorizedException,
 } from '@nestjs/common'
@@ -29,9 +29,9 @@ export class JwtAuthGuard implements CanActivate {
   }
 
   handleRequest<User>(err, user: User): User {
-    if (err || !user) {
+    if (err || !user)
       throw new UnauthorizedException('身份验证失败')
-    }
+
     return user
   }
 }

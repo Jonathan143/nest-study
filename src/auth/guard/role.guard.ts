@@ -26,7 +26,7 @@ export class RolesGuard implements CanActivate {
     const user = req.user
     if (!user) return false
 
-    const hasRoles = roles.some(role => role === user.role)
+    const hasRoles = roles.includes(user.role)
     if (!hasRoles) throw new UnauthorizedException('您没有权限')
     return hasRoles
   }

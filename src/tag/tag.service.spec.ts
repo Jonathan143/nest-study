@@ -4,7 +4,7 @@ import { TagService } from './tag.service'
 describe('TagService', () => {
   let service: TagService
 
-  beforeEach(async () => {
+  beforeEach(async() => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [TagService],
     }).compile()

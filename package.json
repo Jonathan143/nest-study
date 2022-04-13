@@ -1,10 +1,10 @@
 {
   "name": "nest-study",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
   "private": true,
+  "description": "",
   "license": "UNLICENSED",
+  "author": "",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
@@ -54,6 +54,7 @@
     "urlencode": "^1.1.0"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^0.20.2",
     "@nestjs/cli": "^8.2.4",
     "@nestjs/schematics": "^8.0.8",
     "@nestjs/testing": "^8.4.3",
@@ -66,11 +67,7 @@
     "@types/passport-local": "^1.0.34",
     "@types/showdown": "^1.9.4",
     "@types/supertest": "^2.0.12",
-    "@typescript-eslint/eslint-plugin": "^5.16.0",
-    "@typescript-eslint/parser": "^5.16.0",
     "eslint": "^8.12.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.0.0",
     "jest": "^27.5.1",
     "prettier": "^2.6.1",
     "source-map-support": "^0.5.21",

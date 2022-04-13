@@ -4,7 +4,7 @@ import { AuthService } from './auth.service'
 describe('AuthService', () => {
   let service: AuthService
 
-  beforeEach(async () => {
+  beforeEach(async() => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [AuthService],
     }).compile()

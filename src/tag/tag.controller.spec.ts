@@ -4,7 +4,7 @@ import { TagController } from './tag.controller'
 describe('TagController', () => {
   let controller: TagController
 
-  beforeEach(async () => {
+  beforeEach(async() => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TagController],
     }).compile()

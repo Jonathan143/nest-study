@@ -4,7 +4,7 @@ import { PostsController } from './posts.controller'
 describe('PostsController', () => {
   let controller: PostsController
 
-  beforeEach(async () => {
+  beforeEach(async() => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PostsController],
     }).compile()

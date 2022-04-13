@@ -1,9 +1,8 @@
-import { BadRequestException } from '@nestjs/common'
+import { BadRequestException, Injectable, NestMiddleware } from '@nestjs/common'
 /***
  * md 文件转为html, 依赖于showdown来处理
  */
 
-import { Injectable, NestMiddleware } from '@nestjs/common'
 import * as showdown from 'showdown'
 import * as cheerio from 'cheerio'
 const converter = new showdown.Converter()
@@ -18,7 +17,8 @@ export class MDMiddleware implements NestMiddleware {
         const html = converter.makeHtml(content)
         req.body.contentHtml = html
         req.body.summary = toText(html)
-      } catch (error) {
+      }
+      catch (error) {
         throw new BadRequestException('markdown 格式错误')
       }
     }
@@ -30,7 +30,7 @@ function toText(html, len = 30) {
   if (html != null) {
     const substr = html.replace(/<[^>]+>|&[^>]+;/g, '').trim()
     console.log('substr', substr)
-    return substr.length < len ? substr : substr.substring(0, len) + '...'
+    return substr.length < len ? substr : `${substr.substring(0, len)}...`
   }
 }
 function getToc(html: string) {
@@ -40,9 +40,9 @@ function getToc(html: string) {
 
   // 用count生成自定义id
   const hArr = []
-  let highestLvl,
-    count = 0
-  $('h1, h2, h3, h4, h5, h6').each(function () {
+  let highestLvl
+  let count = 0
+  $('h1, h2, h3, h4, h5, h6').each(function() {
     const id = `h${count}`
     count++
     $(this).attr('id', id)
@@ -52,7 +52,7 @@ function getToc(html: string) {
     hArr.push({
       hLevel: lvl - highestLvl + 1,
       content: $(this).html(),
-      id: id,
+      id,
     })
   })
   console.log('hArr:', hArr)
@@ -74,7 +74,8 @@ function toTree(flatArr) {
 
       // 改变收集器为当前级别的子集
       collector = item.children
-    } else {
+    }
+    else {
       const topStack = stack[stack.length - 1]
 
       if (topStack.hLevel >= item.hLevel) {

@@ -17,39 +17,39 @@ export const roles: RoleItem[] = ['root', 'author', 'visitor']
 export class User {
   @ApiProperty({ description: '用户id' })
   @PrimaryGeneratedColumn('uuid')
-  id: string
+    id: string
 
   @Column({ length: 100, nullable: true })
-  username: string
+    username: string
 
   @Column({ length: 100, nullable: true })
-  nickname: string
+    nickname: string
 
   @Exclude()
   @Column({ select: false, nullable: true })
-  password: string
+    password: string
 
   @Column({ default: null })
-  avatar: string
+    avatar: string
 
   @Column({ default: null })
-  email: string
+    email: string
 
   @Column({ default: null })
-  openid: string
+    openid: string
 
   @Column('enum', { enum: roles, default: 'visitor' })
-  role: string
+    role: string
 
   @OneToMany(() => PostsEntity, post => post.author)
-  posts: PostsEntity[]
+    posts: PostsEntity[]
 
   @Column({
     name: 'create_time',
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  createTime: Date
+    createTime: Date
 
   @Exclude()
   @Column({
@@ -57,7 +57,7 @@ export class User {
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  updateTime: Date
+    updateTime: Date
 
   @BeforeInsert()
   async encryptPwd() {

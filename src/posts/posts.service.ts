@@ -1,11 +1,11 @@
+import { count } from 'console'
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository, getRepository } from 'typeorm'
 import { CategoryService } from './../category/category.service'
 import { CreatePostDto, PostInfoDto, PostsRo } from './dto/post.dto'
-import { HttpException, Injectable, HttpStatus } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { getRepository, Repository } from 'typeorm'
 import { PostsEntity } from './posts.entity'
 import { TagService } from './../tag/tag.service'
-import { count } from 'console'
 
 @Injectable()
 export class PostsService {
@@ -18,27 +18,25 @@ export class PostsService {
 
   async create(user, post: CreatePostDto): Promise<number> {
     const { title } = post
-    if (!title) {
+    if (!title)
       throw new HttpException('缺少文章标题', HttpStatus.BAD_REQUEST)
-    }
 
     const doc = await this.postsRepository.findOne({
       where: { title },
     })
-    if (doc) {
+    if (doc)
       throw new HttpException('文章已存在', HttpStatus.BAD_REQUEST)
-    }
 
     const { tag, category = 0, status, isRecommend, coverUrl } = post
 
     const categoryDoc = await this.categoryService.findById(category)
 
-    const tags = await this.tagService.findByIds(('' + tag).split(','))
+    const tags = await this.tagService.findByIds((`${tag}`).split(','))
     const postParam: Partial<PostsEntity> = {
       ...post,
       isRecommend: isRecommend ? 1 : 0,
       category: categoryDoc,
-      tags: tags,
+      tags,
       author: user,
     }
     if (status === 'publish') {
@@ -71,7 +69,7 @@ export class PostsService {
 
     const posts = await qb.getMany()
     const result: PostInfoDto[] = posts.map(item => item.toResponseObject())
-    return { list: result, count: count }
+    return { list: result, count }
 
     //  使用find 方式实现
     /**
@@ -108,12 +106,11 @@ export class PostsService {
 
   async updateById(id, post): Promise<number> {
     const existPost = await this.postsRepository.findOne(id)
-    if (!existPost) {
+    if (!existPost)
       throw new HttpException(`id为${id}的文章不存在`, HttpStatus.BAD_REQUEST)
-    }
 
     const { category, tag, status } = post
-    const tags = await this.tagService.findByIds(('' + tag).split(','))
+    const tags = await this.tagService.findByIds((`${tag}`).split(','))
     const categoryDoc = await this.categoryService.findById(category)
     const newPost = {
       ...post,
@@ -138,7 +135,7 @@ export class PostsService {
   async getArchives() {
     const data = await this.postsRepository
       .createQueryBuilder('post')
-      .select([`DATE_FORMAT(update_time, '%Y年%m') time`, `COUNT(*) count`])
+      .select(['DATE_FORMAT(update_time, \'%Y年%m\') time', 'COUNT(*) count'])
       .where('status=:status', { status: 'publish' })
       .groupBy('time')
       .orderBy('update_time', 'DESC')
@@ -150,7 +147,7 @@ export class PostsService {
     const data = await this.postsRepository
       .createQueryBuilder('post')
       .where('status=:status', { status: 'publish' })
-      .andWhere(`DATE_FORMAT(update_time, '%Y年%m')=:time`, { time: time })
+      .andWhere('DATE_FORMAT(update_time, \'%Y年%m\')=:time', { time })
       .orderBy('update_time', 'DESC')
       .getRawMany()
     return data
@@ -158,9 +155,9 @@ export class PostsService {
 
   async remove(id) {
     const existPost = await this.postsRepository.findOne(id)
-    if (!existPost) {
+    if (!existPost)
       throw new HttpException(`id为${id}的文章不存在`, HttpStatus.BAD_REQUEST)
-    }
+
     return await this.postsRepository.remove(existPost)
   }
 }

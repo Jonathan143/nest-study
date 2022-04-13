@@ -7,24 +7,24 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger'
-import { AppService } from './app.service'
 import { FileInterceptor } from '@nestjs/platform-express'
+import { AppService } from './app.service'
 
-export const ApiFile =
-  (fileName = 'file'): MethodDecorator =>
-  (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-    ApiBody({
-      schema: {
-        type: 'object',
-        properties: {
-          [fileName]: {
-            type: 'string',
-            format: 'binary',
+export const ApiFile
+  = (fileName = 'file'): MethodDecorator =>
+    (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+      ApiBody({
+        schema: {
+          type: 'object',
+          properties: {
+            [fileName]: {
+              type: 'string',
+              format: 'binary',
+            },
           },
         },
-      },
-    })(target, propertyKey, descriptor)
-  }
+      })(target, propertyKey, descriptor)
+    }
 @ApiTags('公共接口')
 @Controller('app')
 export class AppController {

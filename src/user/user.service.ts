@@ -1,16 +1,16 @@
 import { compareSync } from 'bcryptjs'
-import { User } from './entities/user.entity'
 import {
-  Injectable,
+  BadRequestException,
   HttpException,
   HttpStatus,
-  BadRequestException,
+  Injectable,
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { CreateUserDto } from './dto/create-user.dto'
-import { UpdateUserDto } from './dto/update-user.dto'
 import { Repository } from 'typeorm'
 import { WechatUserInfo } from '../auth/auth.interface'
+import { CreateUserDto } from './dto/create-user.dto'
+import { UpdateUserDto } from './dto/update-user.dto'
+import { User } from './entities/user.entity'
 
 @Injectable()
 export class UserService {
@@ -29,9 +29,8 @@ export class UserService {
     const user = await this.userRepository.findOne({
       where: { username },
     })
-    if (user) {
+    if (user)
       throw new HttpException('用户名已存在', HttpStatus.BAD_REQUEST)
-    }
 
     const newUser = await this.userRepository.create(createUser)
     return await this.userRepository.save(newUser)
@@ -67,7 +66,7 @@ export class UserService {
   //   }
 
   findAll() {
-    return `This action returns all user`
+    return 'This action returns all user'
   }
 
   async findOne(id: string) {

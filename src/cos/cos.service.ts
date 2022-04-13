@@ -1,36 +1,44 @@
 import { Injectable } from '@nestjs/common'
-const STS = require('qcloud-cos-sts')
-
-const getSTSConfig = ({ bucket = '', region = '', allowPrefix = '/*' }) => ({
-  secretId: process.env.COS_SECRECT_ID,
-  secretKey: process.env.COS_SECRECT_KEY,
-  proxy: '',
-  durationSeconds: 1800,
-
-  // 放行判断相关参数
-  bucket,
-  region,
-  allowPrefix,
-  allowActions: [
-    'name/cos:GetService',
-    'name/cos:GetBucket',
-    'name/cos:GetObject',
-    // 简单上传
-    'name/cos:PutObject',
-    'name/cos:PostObject',
-    // 分片上传
-    'name/cos:ListMultipartUploads',
-    'name/cos:InitiateMultipartUpload',
-    'name/cos:ListMultipartUploads',
-    'name/cos:ListParts',
-    'name/cos:UploadPart',
-    'name/cos:CompleteMultipartUpload',
-  ],
-})
+import { ConfigService } from '@nestjs/config'
+import STS = require('qcloud-cos-sts')
 
 @Injectable()
 export class CosService {
-  constructor() {}
+  configService
+  constructor(
+    configService: ConfigService,
+  ) {
+    this.configService = configService
+  }
+
+  getSTSConfig({ bucket = '', region = '', allowPrefix = '/*' }) {
+    return {
+      secretId: this.configService.get('COS_SECRECT_ID'),
+      secretKey: this.configService.get('COS_SECRECT_KEY'),
+      proxy: '',
+      durationSeconds: 1800,
+
+      // 放行判断相关参数
+      bucket: bucket || this.configService.get('COS_BUCKET'),
+      region,
+      allowPrefix,
+      allowActions: [
+        'name/cos:GetService',
+        'name/cos:GetBucket',
+        'name/cos:GetObject',
+        // 简单上传
+        'name/cos:PutObject',
+        'name/cos:PostObject',
+        // 分片上传
+        'name/cos:ListMultipartUploads',
+        'name/cos:InitiateMultipartUpload',
+        'name/cos:ListMultipartUploads',
+        'name/cos:ListParts',
+        'name/cos:UploadPart',
+        'name/cos:CompleteMultipartUpload',
+      ],
+    }
+  }
 
   async getAuthorization() {
     const {
@@ -42,7 +50,7 @@ export class CosService {
       secretKey,
       proxy,
       durationSeconds,
-    } = getSTSConfig({})
+    } = this.getSTSConfig({})
     const shortBucketName = bucket.substring(0, bucket.lastIndexOf('-'))
     const appId = bucket.substring(1 + bucket.lastIndexOf('-'))
     const policy = {
@@ -53,16 +61,16 @@ export class CosService {
           effect: 'allow',
           principal: { qcs: ['*'] },
           resource: [
-            'qcs::cos:' +
-              region +
-              ':uid/' +
-              appId +
-              ':prefix//' +
-              appId +
-              '/' +
-              shortBucketName +
-              '/' +
-              allowPrefix,
+            `qcs::cos:${
+              region
+            }:uid/${
+              appId
+            }:prefix//${
+              appId
+            }/${
+              shortBucketName
+            }/${
+              allowPrefix}`,
           ],
         },
       ],
@@ -71,13 +79,13 @@ export class CosService {
     return new Promise((resolve, reject) => {
       STS.getCredential(
         {
-          secretId: secretId,
-          secretKey: secretKey,
+          secretId,
+          secretKey,
           proxy,
           durationSeconds,
-          policy: policy,
+          policy,
         },
-        function (err, tempKeys) {
+        (err, tempKeys) => {
           const result = err || tempKeys
           console.log(result)
           resolve(result)

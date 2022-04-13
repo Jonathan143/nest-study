@@ -5,5 +5,5 @@ export class CreateCategoryDto {
   @ApiProperty({ description: '分类名称' })
   @IsNotEmpty({ message: '请输入分类名称' })
   @IsString()
-  name: string
+    name: string
 }

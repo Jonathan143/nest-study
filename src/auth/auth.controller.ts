@@ -1,5 +1,3 @@
-import { AuthService } from './auth.service'
-import { LoginDto } from './dto/login.dto'
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger'
 import {
   Body,
@@ -14,9 +12,11 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import * as urlencode from 'urlencode'
+import { AuthGuard } from '@nestjs/passport'
+import { AuthService } from './auth.service'
+import { LoginDto } from './dto/login.dto'
 import { WechatLoginDto } from './dto/wechat-login.dto'
 import { NoAuth } from '@/core/decorator/customize'
-import { AuthGuard } from '@nestjs/passport'
 
 @ApiTags('验证')
 @Controller('auth')

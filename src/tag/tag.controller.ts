@@ -1,6 +1,6 @@
-import { TagService } from './tag.service'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { Body, Controller, Post } from '@nestjs/common'
+import { TagService } from './tag.service'
 import { CreateTagDto } from './dto/create-tag.dto'
 
 @ApiTags('标签')

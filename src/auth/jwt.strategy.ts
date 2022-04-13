@@ -1,11 +1,11 @@
-import { AuthService } from './auth.service'
 import { ConfigService } from '@nestjs/config'
 import { UnauthorizedException } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { InjectRepository } from '@nestjs/typeorm'
-import { StrategyOptions, Strategy, ExtractJwt } from 'passport-jwt'
+import { ExtractJwt, Strategy, StrategyOptions } from 'passport-jwt'
 import { Repository } from 'typeorm'
 import { User } from 'src/user/entities/user.entity'
+import { AuthService } from './auth.service'
 
 export class JwtStorage extends PassportStrategy(Strategy) {
   constructor(
@@ -22,9 +22,9 @@ export class JwtStorage extends PassportStrategy(Strategy) {
 
   async validate(user: User) {
     const existUser = await this.authService.getUser(user)
-    if (!existUser) {
+    if (!existUser)
       throw new UnauthorizedException('token不正确')
-    }
+
     return existUser
   }
 }

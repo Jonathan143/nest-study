@@ -11,25 +11,25 @@ import {
 @Entity('category')
 export class CategoryEntity {
   @PrimaryGeneratedColumn()
-  id: number
+    id: number
 
   @Column()
-  name: string
+    name: string
 
   @OneToMany(() => PostsEntity, post => post.category)
-  posts: Array<PostsEntity>
+    posts: Array<PostsEntity>
 
   @CreateDateColumn({
     type: 'timestamp',
     comment: '创建时间',
     name: 'create_time',
   })
-  createTime: Date
+    createTime: Date
 
   @UpdateDateColumn({
     type: 'timestamp',
     comment: '更新时间',
     name: 'update_time',
   })
-  updateTime: Date
+    updateTime: Date
 }

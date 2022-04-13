@@ -1,5 +1,3 @@
-import { TagEntity } from '@/tag/entities/tag.entity'
-import { CategoryEntity } from '@/category/entities/category.entity'
 import { User } from 'src/user/entities/user.entity'
 import {
   Column,
@@ -13,51 +11,53 @@ import {
 } from 'typeorm'
 import { Exclude, Expose } from 'class-transformer'
 import { PostInfoDto } from './dto/post.dto'
+import { CategoryEntity } from '@/category/entities/category.entity'
+import { TagEntity } from '@/tag/entities/tag.entity'
 
 @Entity('post')
 export class PostsEntity {
   @PrimaryGeneratedColumn()
-  id: number // 标记为主列，值自动生成
+    id: number // 标记为主列，值自动生成
 
   // 文章标题
   @Column({ length: 50 })
-  title: string
+    title: string
 
   // markdown内容
   @Column({ type: 'mediumtext', default: null })
-  content: string
+    content: string
 
   // markdown 转 html
   @Column({ type: 'mediumtext', default: null, name: 'content_html' })
-  contentHtml: string
+    contentHtml: string
 
   // 摘要，自动生成
   @Column({ type: 'text', default: null })
-  summary: string
+    summary: string
 
   // 封面图
   @Column({ default: null, name: 'cover_url' })
-  coverUrl: string
+    coverUrl: string
 
   // 阅读量
   @Column({ type: 'int', default: 0 })
-  count: number
+    count: number
 
   // 点赞量
   @Column({ type: 'int', default: 0, name: 'like_count' })
-  likeCount: number
+    likeCount: number
 
   // 推荐显示
   @Column({ type: 'tinyint', default: 0, name: 'is_recommend' })
-  isRecommend: number
+    isRecommend: number
 
   // 文章状态
   @Column('simple-enum', { enum: ['draft', 'publish'] })
-  status: string
+    status: string
 
   // 作者
   @ManyToOne(type => User, user => user.nickname)
-  author: User
+    author: User
 
   //   @RelationId( (user:User) => user.posts)
   //   userId:User
@@ -70,7 +70,7 @@ export class PostsEntity {
   @JoinColumn({
     name: 'category_id',
   })
-  category: CategoryEntity
+    category: CategoryEntity
 
   // 标签
   @ManyToMany(() => TagEntity, tag => tag.posts)
@@ -79,36 +79,36 @@ export class PostsEntity {
     joinColumns: [{ name: 'post_id' }],
     inverseJoinColumns: [{ name: 'tag_id' }],
   })
-  tags: TagEntity[]
+    tags: TagEntity[]
 
   @Column({ type: 'timestamp', name: 'publish_time', default: null })
-  publishTime: Date
+    publishTime: Date
 
   @Column({
     type: 'timestamp',
     name: 'create_time',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  createTime: Date
+    createTime: Date
 
   @Column({
     type: 'timestamp',
     name: 'update_time',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  updateTime: Date
+    updateTime: Date
 
   toResponseObject(): PostInfoDto {
     const responseObj: PostInfoDto = {
       ...this,
-      isRecommend: this.isRecommend ? true : false,
+      isRecommend: !!this.isRecommend,
     }
-    if (this.category) {
+    if (this.category)
       responseObj.category = this.category.name
-    }
-    if (this.tags && this.tags.length) {
+
+    if (this.tags && this.tags.length)
       responseObj.tags = this.tags.map(item => item.name)
-    }
+
     if (this.author && this.author.id) {
       responseObj.userId = this.author.id
       responseObj.author = this.author.nickname || this.author.username

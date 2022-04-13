@@ -1,4 +1,3 @@
-import { NoAuth } from '@/core/decorator/customize'
 import { Controller, Get } from '@nestjs/common'
 import {
   ApiBearerAuth,
@@ -7,6 +6,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { CosService } from './cos.service'
+import { NoAuth } from '@/core/decorator/customize'
 
 @ApiTags('cos')
 @Controller('cos')
