@@ -12,6 +12,7 @@ import { CategoryModule } from './category/category.module'
 import { TagModule } from './tag/tag.module'
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard'
 import { RolesGuard } from '@/auth/guard/role.guard'
+import { CosModule } from './cos/cos.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: [envConfig.path] }),
@@ -37,6 +38,7 @@ import { RolesGuard } from '@/auth/guard/role.guard'
     AuthModule,
     CategoryModule,
     TagModule,
+    CosModule,
   ],
   controllers: [AppController],
   providers: [
