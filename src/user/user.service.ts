@@ -69,7 +69,7 @@ export class UserService {
     return 'This action returns all user'
   }
 
-  async findOne(id: string) {
+  async findOne(id) {
     return await this.userRepository.findOne(id)
   }
 
