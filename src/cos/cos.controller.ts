@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common'
+import { Controller, Get, Query } from '@nestjs/common'
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -17,7 +17,7 @@ export class CosController {
   @NoAuth()
   // @ApiBearerAuth()
   @ApiOperation({ summary: '获取COS临时密钥' })
-  getAuthorization() {
-    return this.cosService.getAuthorization()
+  getAuthorization(@Query('bucket')bucket: string) {
+    return this.cosService.getAuthorization({ bucket })
   }
 }

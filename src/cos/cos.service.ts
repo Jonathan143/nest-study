@@ -11,7 +11,7 @@ export class CosService {
     this.configService = configService
   }
 
-  getSTSConfig({ bucket = '', region = '', allowPrefix = '/*' }) {
+  getSTSConfig({ bucket = '', region = '', allowPrefix = '*' }) {
     return {
       secretId: this.configService.get('COS_SECRECT_ID'),
       secretKey: this.configService.get('COS_SECRECT_KEY'),
@@ -40,7 +40,7 @@ export class CosService {
     }
   }
 
-  async getAuthorization() {
+  async getAuthorization({ bucket: qBucket }) {
     const {
       bucket,
       allowActions,
@@ -50,7 +50,7 @@ export class CosService {
       secretKey,
       proxy,
       durationSeconds,
-    } = this.getSTSConfig({})
+    } = this.getSTSConfig({ bucket: qBucket })
     const shortBucketName = bucket.substring(0, bucket.lastIndexOf('-'))
     const appId = bucket.substring(1 + bucket.lastIndexOf('-'))
     const policy = {
