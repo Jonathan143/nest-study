@@ -17,8 +17,7 @@ import { RolesGuard } from '@/auth/guard/role.guard'
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, envFilePath: [envConfig.path] }),
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, cache: true, envFilePath: [envConfig.path] }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: async(configService: ConfigService) => ({

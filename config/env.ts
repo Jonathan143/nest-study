@@ -1,21 +1,20 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'fs'
+import * as path from 'path'
 // const dotenv = require('dotenv');
-const isProd = process.env.NODE_ENV === 'production';
+const isProd = process.env.NODE_ENV === 'production'
 
 function parseEnv() {
-  const localEnv = path.resolve('.env');
-  const prodEnv = path.resolve('.env.prod');
+  const localEnv = path.resolve('.env')
+  const localTestEnv = path.resolve('.env.local')
+  const prodEnv = path.resolve('.env.prod')
+  const hasLocalTestEnv = fs.existsSync(localTestEnv)
 
-  if (!fs.existsSync(localEnv) && !fs.existsSync(prodEnv)) {
-    throw new Error('缺少环境配置文件');
-  }
+  if (!fs.existsSync(localEnv) && !fs.existsSync(prodEnv))
+    throw new Error('缺少环境配置文件')
 
-  const filePath = isProd && fs.existsSync(prodEnv) ? prodEnv : localEnv;
+  const filePath = isProd && fs.existsSync(prodEnv) ? prodEnv : hasLocalTestEnv ? localTestEnv : localEnv
 
-//   const config = dotenv.parse(fs.readFileSync(filePath));
-
-  return { path:filePath };
+  return { path: filePath }
 }
 
-export default parseEnv();
+export default parseEnv()
