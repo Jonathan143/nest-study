@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { APP_GUARD } from '@nestjs/core'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule, ConfigService } from '@nestjs/config'
+import { NestApiCacheModule } from 'nest-api-cache'
 import envConfig from '../config/env'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
@@ -13,6 +14,7 @@ import { TagModule } from './tag/tag.module'
 import { CosModule } from './cos/cos.module'
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard'
 import { RolesGuard } from '@/auth/guard/role.guard'
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: [envConfig.path] }),
@@ -39,6 +41,8 @@ import { RolesGuard } from '@/auth/guard/role.guard'
     CategoryModule,
     TagModule,
     CosModule,
+    /** 默认一分钟缓存1分钟 */
+    NestApiCacheModule.forRoot({ redisConfig: {}, redisEXSecond: 60 }),
   ],
   controllers: [AppController],
   providers: [
@@ -53,4 +57,5 @@ import { RolesGuard } from '@/auth/guard/role.guard'
     },
   ],
 })
+
 export class AppModule {}
