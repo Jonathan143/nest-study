@@ -2,14 +2,11 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
-  SetMetadata,
   UnauthorizedException,
 } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Reflector } from '@nestjs/core'
 import { RoleItem } from '@/user/entities/user.entity'
-
-export const Roles = (...roles: RoleItem[]) => SetMetadata('roles', roles)
 
 @Injectable()
 export class RolesGuard implements CanActivate {

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common'
 import { APP_GUARD } from '@nestjs/core'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule, ConfigService } from '@nestjs/config'
-import { NestApiCacheModule } from 'nest-api-cache'
+import { NestApiCacheModule } from 'nest-redis-cache'
 import envConfig from '../config/env'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
@@ -22,7 +22,7 @@ import { RolesGuard } from '@/auth/guard/role.guard'
       inject: [ConfigService],
       useFactory: async(configService: ConfigService) => ({
         type: 'mysql',
-        host: configService.get('DB_HOST', '127.0.0.0'),
+        host: configService.get('DB_HOST', '127.0.0.1'),
         port: configService.get<number>('DB_PORT', 3306),
         username: configService.get('DB_USER', 'root'),
         password: configService.get('DB_PASSWORD', 'root'),
@@ -34,14 +34,22 @@ import { RolesGuard } from '@/auth/guard/role.guard'
         autoLoadEntities: true,
       }),
     }),
+    /** 默认一分钟缓存1分钟 */
+    NestApiCacheModule.forRoot({
+      redisConfig: {
+        host: process.env.REDIS_HOST,
+        port: +process.env.REDIS_PORT,
+        username: process.env.REDIS_USERNAME,
+        password: process.env.REDIS_PASSWORD,
+      },
+      redisEXSecond: 60,
+    }),
     PostsModule,
     UserModule,
     AuthModule,
     CategoryModule,
     TagModule,
     CosModule,
-    /** 默认一分钟缓存1分钟 */
-    NestApiCacheModule.forRoot({ redisConfig: {}, redisEXSecond: 60 }),
   ],
   controllers: [AppController],
   providers: [

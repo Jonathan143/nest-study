@@ -2,13 +2,10 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
-  SetMetadata,
   UnauthorizedException,
 } from '@nestjs/common'
 import { AuthGuard, IAuthGuard } from '@nestjs/passport'
 import { Reflector } from '@nestjs/core'
-
-export const NoAuth = () => SetMetadata('no-auth', true)
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {

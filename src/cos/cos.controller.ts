@@ -5,7 +5,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
-import { NestCacheApi } from 'nest-api-cache'
+import { NestCacheApi } from 'nest-redis-cache'
 import { CosService } from './cos.service'
 import { NoAuth } from '@/core/decorator/customize'
 
@@ -17,7 +17,11 @@ export class CosController {
   @Get('auth')
   @NoAuth()
   // @ApiBearerAuth()
-  @NestCacheApi(25 * 60)
+  @NestCacheApi({
+    exSecond: 25 * 60,
+    key: process.env.COS_BUCKET,
+    formatKey: (key, request) => (`cos_auth_${request.query?.bucket || key}`),
+  })
   @ApiOperation({ summary: '获取COS临时密钥' })
   getAuthorization(@Query('bucket')bucket: string) {
     return this.cosService.getAuthorization({ bucket })
