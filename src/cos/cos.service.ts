@@ -32,10 +32,11 @@ export class CosService {
         // 分片上传
         'name/cos:ListMultipartUploads',
         'name/cos:InitiateMultipartUpload',
-        'name/cos:ListMultipartUploads',
         'name/cos:ListParts',
         'name/cos:UploadPart',
         'name/cos:CompleteMultipartUpload',
+        // 删除
+        'name/cos:DeleteObject',
       ],
     }
   }
