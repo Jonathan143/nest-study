@@ -70,7 +70,7 @@ export class UserService {
   }
 
   async findOne(id) {
-    return await this.userRepository.findOne(id)
+    return await this.userRepository.findOne({ where: { id } })
   }
 
   async findByOpenid(openid: string) {

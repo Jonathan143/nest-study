@@ -53,6 +53,7 @@
     "rxjs": "^7.5.5",
     "showdown": "^2.1.0",
     "swagger-ui-express": "^4.4.0",
+    "tencentcloud-sdk-nodejs": "^4.0.343",
     "typeorm": "^0.3.6",
     "urlencode": "^1.1.0"
   },

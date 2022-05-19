@@ -1,20 +1,50 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+import * as tencentcloud from 'tencentcloud-sdk-nodejs'
+import { PurgeUrlsCacheRequest } from 'tencentcloud-sdk-nodejs/src/services/cdn/v20180606/cdn_models'
 import STS = require('qcloud-cos-sts')
+
+// 导入对应产品模块的client models。
+const CdnClient = tencentcloud.cdn.v20180606.Client
 
 @Injectable()
 export class CosService {
-  configService
+  configService: ConfigService
+  secretId: string
+  secretKey: string
+  cdnClient = new CdnClient({
+    credential: {
+      secretId: '',
+      secretKey: '',
+    },
+  })
+
   constructor(
     configService: ConfigService,
   ) {
     this.configService = configService
+    this.secretId = this.configService.get('COS_SECRECT_ID')
+    this.secretKey = this.configService.get('COS_SECRECT_KEY')
+
+    const clientConfig = {
+      credential: {
+        secretId: this.secretId,
+        secretKey: this.secretKey,
+      },
+      region: '',
+      profile: {
+        httpProfile: {
+          endpoint: 'cdn.tencentcloudapi.com',
+        },
+      },
+    }
+    this.cdnClient = new CdnClient(clientConfig)
   }
 
   getSTSConfig({ bucket = '', region = '', allowPrefix = '*' }) {
     return {
-      secretId: this.configService.get('COS_SECRECT_ID'),
-      secretKey: this.configService.get('COS_SECRECT_KEY'),
+      secretId: this.secretId,
+      secretKey: this.secretKey,
       proxy: '',
       durationSeconds: 1800,
 
@@ -93,5 +123,9 @@ export class CosService {
         },
       )
     })
+  }
+
+  async refreshCDNCache(params: PurgeUrlsCacheRequest) {
+    return this.cdnClient.PurgeUrlsCache(params)
   }
 }
