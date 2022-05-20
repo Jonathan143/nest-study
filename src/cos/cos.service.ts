@@ -12,12 +12,7 @@ export class CosService {
   configService: ConfigService
   secretId: string
   secretKey: string
-  cdnClient = new CdnClient({
-    credential: {
-      secretId: '',
-      secretKey: '',
-    },
-  })
+  cdnClient: InstanceType<typeof CdnClient>
 
   constructor(
     configService: ConfigService,

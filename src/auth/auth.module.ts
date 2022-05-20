@@ -10,10 +10,11 @@ import { LocalStorage } from './local.strategy'
 import { AuthService } from './auth.service'
 import { AuthController } from './auth.controller'
 import { JwtStorage } from './jwt.strategy'
+import { SocketModule } from '@/socket/socket.module'
 
 const jwtModule = JwtModule.registerAsync({
   inject: [ConfigService],
-  useFactory: async(configService: ConfigService) => {
+  useFactory: async (configService: ConfigService) => {
     return {
       secret: configService.get('SECRET'),
       signOptions: { expiresIn: '4h' },
@@ -28,6 +29,7 @@ const jwtModule = JwtModule.registerAsync({
     PassportModule,
     jwtModule,
     UserModule,
+    SocketModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStorage, JwtStorage],

@@ -4,7 +4,7 @@ import { CosController } from './cos.controller'
 describe('CosController', () => {
   let controller: CosController
 
-  beforeEach(async() => {
+  beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CosController],
     }).compile()

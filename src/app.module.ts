@@ -21,7 +21,7 @@ import { RolesGuard } from '@/auth/guard/role.guard'
     ConfigModule.forRoot({ isGlobal: true, cache: true, envFilePath: [envConfig.path] }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: async(configService: ConfigService) => ({
+      useFactory: async (configService: ConfigService) => ({
         type: 'mysql',
         host: configService.get('DB_HOST', '127.0.0.1'),
         port: configService.get<number>('DB_PORT', 3306),

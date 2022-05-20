@@ -8,7 +8,7 @@ import {
 import { NestCacheApi } from 'nest-redis-cache'
 import { arrayNotEmpty } from 'class-validator'
 import { CosService } from './cos.service'
-import { RefreshCDNCache } from './dot/refresh-cdn-cache.dot'
+import { RefreshCDNCacheDTO } from './dto/refresh-cdn-cache.dto'
 import { NoAuth } from '@/core/decorator/customize'
 
 @ApiTags('cos')
@@ -31,7 +31,7 @@ export class CosController {
   @Post('refreshCDNCache')
   @ApiBearerAuth()
   @ApiOperation({ summary: '刷新根据链接CDN缓存' })
-  refreshCDNCache(@Body() body: RefreshCDNCache) {
+  refreshCDNCache(@Body() body: RefreshCDNCacheDTO) {
     return this.cosService.refreshCDNCache({ Urls: body.urlList })
   }
 }

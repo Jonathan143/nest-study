@@ -36,7 +36,7 @@ export class AuthService {
     return { token, ...user }
   }
 
-  async loginWithWechat(code) {
+  async loginWithWechat(code: string) {
     if (!code)
       throw new BadRequestException('请输入微信授权码')
 
