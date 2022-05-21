@@ -9,17 +9,15 @@ const CdnClient = tencentcloud.cdn.v20180606.Client
 
 @Injectable()
 export class CosService {
-  configService: ConfigService
   secretId: string
   secretKey: string
   cdnClient: InstanceType<typeof CdnClient>
 
   constructor(
-    configService: ConfigService,
+    private readonly configService: ConfigService,
   ) {
-    this.configService = configService
-    this.secretId = this.configService.get('COS_SECRECT_ID')
-    this.secretKey = this.configService.get('COS_SECRECT_KEY')
+    this.secretId = configService.get('COS_SECRECT_ID')
+    this.secretKey = configService.get('COS_SECRECT_KEY')
 
     const clientConfig = {
       credential: {

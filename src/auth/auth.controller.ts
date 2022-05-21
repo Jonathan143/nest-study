@@ -27,15 +27,13 @@ import { SocketGateway } from '@/socket/socket.gateway'
 @Controller('auth')
 export class AuthController {
   socketServe: Socket
-  configService: ConfigService
+  // configService: ConfigService
 
   constructor(
     private readonly authService: AuthService,
     private readonly ws: SocketGateway,
-    private readonly config: ConfigService,
-  ) {
-    this.configService = config
-  }
+    private readonly configService: ConfigService,
+  ) {}
 
   @ApiOperation({ summary: '登录' })
   @NoAuth()
@@ -51,7 +49,8 @@ export class AuthController {
   @Get('wechatOAuth2')
   async wechatLogin(@Query() query: WechatOAuth2Dto, @Res() res: Response) {
     const APPID = process.env.APPID
-    const redirectUri = urlencode(`${this.configService.get('SERVE_URL')}/api/auth/wechat`)
+    const redirectUri = urlencode(`${this.configService.get('SERVER_URL')}/api/auth/wechat`)
+
     this.ws.server.to(query.socketId).emit('wechatLogin', { state: 1, message: '扫码成功' })
 
     res.redirect(
