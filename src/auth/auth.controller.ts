@@ -62,12 +62,15 @@ export class AuthController {
   @ApiBody({ type: WechatLoginDto, required: true })
   @NoAuth()
   @Get('wechat')
-  async loginWithWechat(@Query() query: WechatLoginDto) {
+  async loginWithWechat(@Query() query: WechatLoginDto, @Res() res: Response) {
     const { state, code } = query
 
     const userInfo = await this.authService.loginWithWechat(code)
     this.ws.server.to(state).emit('wechatLogin', { state: 2, message: '登录成功', userInfo })
-    return userInfo
+
+    res.redirect(
+      `${this.configService.get('WEB_URL')}/#/result-page?status=success&title=登录成功&hiddenButton=1`,
+    )
   }
 
   @ApiOperation({ summary: '微信登录' })

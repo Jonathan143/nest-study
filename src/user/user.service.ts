@@ -39,31 +39,13 @@ export class UserService {
   async registerByWechat(userInfo: WechatUserInfo) {
     const { nickname, openid, headimgurl } = userInfo
     const newUser = await this.userRepository.create({
+      username: nickname,
       nickname,
       openid,
       avatar: headimgurl,
     })
     return await this.userRepository.save(newUser)
   }
-
-  //   async login(user: Partial<CreateUserDto>) {
-  //     const { username, password } = user;
-
-  //     const existUser = await this.userRepository
-  //       .createQueryBuilder('user')
-  //       .addSelect('user.password')
-  //       .where('user.username=:username', { username })
-  //       .getOne();
-
-  //     console.log('existUser', existUser);
-  //     if (
-  //       !existUser ||
-  //       !(await this.comparePassword(password, existUser.password))
-  //     ) {
-  //       throw new BadRequestException('用户名或者密码错误');
-  //     }
-  //     return existUser;
-  //   }
 
   findAll() {
     return 'This action returns all user'
