@@ -24,7 +24,7 @@ export class CosService {
         secretId: this.secretId,
         secretKey: this.secretKey,
       },
-      region: '',
+      region: 'ap-guangzhou',
       profile: {
         httpProfile: {
           endpoint: 'cdn.tencentcloudapi.com',
@@ -120,5 +120,14 @@ export class CosService {
 
   async refreshCDNCache(params: PurgeUrlsCacheRequest) {
     return this.cdnClient.PurgeUrlsCache(params)
+  }
+
+  async getCDNDescribeDomains({ bucket, region }: { bucket: string; region: string }) {
+    return this.cdnClient.DescribeDomains({
+      Filters: [{
+        Name: 'origin',
+        Value: [`${bucket}.cos.${region}.myqcloud.com`],
+      }],
+    })
   }
 }
