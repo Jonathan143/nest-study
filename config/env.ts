@@ -1,6 +1,5 @@
 import * as fs from 'fs'
 import * as path from 'path'
-// const dotenv = require('dotenv');
 const isProd = process.env.NODE_ENV === 'production'
 
 function parseEnv() {
