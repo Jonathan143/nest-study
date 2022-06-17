@@ -17,7 +17,7 @@ const jwtModule = JwtModule.registerAsync({
   useFactory: async (configService: ConfigService) => {
     return {
       secret: configService.get('SECRET'),
-      signOptions: { expiresIn: '4h' },
+      signOptions: { expiresIn: '8h' },
     }
   },
 })

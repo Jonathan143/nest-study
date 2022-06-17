@@ -19,7 +19,7 @@ import { Socket } from 'socket.io'
 import { ConfigService } from '@nestjs/config'
 import { AuthService } from './auth.service'
 import { LoginDto } from './dto/login.dto'
-import { WechatLoginDto, WechatOAuth2Dto } from './dto/wechat-login.dto'
+import { WechatLoginDto, WechatMINILoginDto, WechatOAuth2Dto } from './dto/wechat-login.dto'
 import { NoAuth } from '@/core/decorator/customize'
 import { SocketGateway } from '@/socket/socket.gateway'
 
@@ -79,5 +79,13 @@ export class AuthController {
   @Post('wechat')
   async loginWithWechat2(@Body() body: WechatLoginDto) {
     return this.authService.loginWithWechat(body.code)
+  }
+
+  @ApiOperation({ summary: '微信小程序登录' })
+  @ApiBody({ type: WechatMINILoginDto, required: true })
+  @NoAuth()
+  @Post('wechat_mini_code2Session')
+  async code2Session(@Body() body: WechatMINILoginDto) {
+    return this.authService.code2Session(body.code)
   }
 }

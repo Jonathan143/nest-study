@@ -109,6 +109,26 @@ export class AuthService {
     return this.accessTokenInfo.accessToken
   }
 
+  /**
+   * 微信小程序 通过 code 换取 openid
+   */
+  async code2Session(code: string) {
+    const { MINI_APPID, MINI_APPSECRET } = process.env
+    const { data }: AxiosResponse<WechatError & AccessConfig, any> = await lastValueFrom(
+      this.httpService.get(
+        `${this.apiServer}/sns/jscode2session?appid=${MINI_APPID}&secret=${MINI_APPSECRET}&js_code=${code}&grant_type=authorization_code`,
+      ),
+    )
+
+    if (data.errcode) {
+      throw new BadRequestException(
+        `[getAccessToken] errcode:${data.errcode}, errmsg:${data.errmsg}`,
+      )
+    }
+
+    return data
+  }
+
   isExpires(access) {
     return Date.now() - access.getTime > access.expiresIn * 1000
   }

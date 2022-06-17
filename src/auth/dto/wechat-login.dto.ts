@@ -16,3 +16,9 @@ export class WechatOAuth2Dto {
   @IsNotEmpty({ message: '连接码不能为空' })
     socketId: string
 }
+
+export class WechatMINILoginDto {
+  @ApiProperty({ description: '授权码' })
+  @IsNotEmpty({ message: '请输入授权码' })
+    code: string
+}
