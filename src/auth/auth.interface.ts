@@ -22,12 +22,13 @@ export interface WechatError {
 export interface WechatUserInfo {
   openid: string
   nickname: string
-  sex: number
-  language: string
-  city: string
-  province: string
-  country: string
   headimgurl: string
-  privilege: string[]
-  unionid: string
+  unionid?: string
+}
+
+export interface WechatMiniOAuth2Info {
+  socketId: string
+  openid: string
+  nickname: string
+  avatar: string
 }

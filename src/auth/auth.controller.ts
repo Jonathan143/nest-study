@@ -1,5 +1,6 @@
 import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger'
 import {
+  BadRequestException,
   Body,
   ClassSerializerInterceptor,
   Controller,
@@ -9,8 +10,7 @@ import {
   Query,
   Req,
   Res,
-  UseGuards,
-  UseInterceptors,
+  UseGuards, UseInterceptors,
 } from '@nestjs/common'
 import * as urlencode from 'urlencode'
 import { AuthGuard } from '@nestjs/passport'
@@ -19,7 +19,7 @@ import { Socket } from 'socket.io'
 import { ConfigService } from '@nestjs/config'
 import { AuthService } from './auth.service'
 import { LoginDto } from './dto/login.dto'
-import { WechatLoginDto, WechatMINILoginDto, WechatOAuth2Dto } from './dto/wechat-login.dto'
+import { WechatLoginDto, WechatMiniLoginDto, WechatMiniOAuth2Dto, WechatMiniQRCodeCreateDto, WechatOAuth2Dto } from './dto/wechat-login.dto'
 import { NoAuth } from '@/core/decorator/customize'
 import { SocketGateway } from '@/socket/socket.gateway'
 
@@ -59,7 +59,6 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: '微信登录' })
-  @ApiBody({ type: WechatLoginDto, required: true })
   @NoAuth()
   @Get('wechat')
   async loginWithWechat(@Query() query: WechatLoginDto, @Res() res: Response) {
@@ -81,11 +80,40 @@ export class AuthController {
     return this.authService.loginWithWechat(body.code)
   }
 
-  @ApiOperation({ summary: '微信小程序登录' })
-  @ApiBody({ type: WechatMINILoginDto, required: true })
+  @ApiOperation({ summary: '微信小程序code2Session' })
+  @ApiBody({ type: WechatMiniLoginDto, required: true })
   @NoAuth()
   @Post('wechat_mini_code2Session')
-  async code2Session(@Body() body: WechatMINILoginDto) {
+  async code2Session(@Body() body: WechatMiniLoginDto) {
     return this.authService.code2Session(body.code)
+  }
+
+  @ApiOperation({ summary: '微信小程序二维码获取' })
+  @NoAuth()
+  @Get('wechat_mini_qrcode')
+  async miniAccesstoken(@Query() query: WechatMiniQRCodeCreateDto) {
+    return this.authService.getUnlimitedMiniQRCode(query)
+  }
+
+  @ApiOperation({ summary: '更新扫码登录状态' })
+  @NoAuth()
+  @Get('wechat_mini_updateScanCodeState')
+  async miniUpdateScanCodeState(@Query() query: WechatMiniLoginDto) {
+    this.ws.server.to(query.code).emit('wechatLogin', { state: 1, message: '扫码成功' })
+
+    return 'success'
+  }
+
+  @ApiOperation({ summary: '微信小程序授权登录' })
+  @ApiBody({ type: WechatMiniOAuth2Dto, required: true })
+  @NoAuth()
+  @Post('wechat_mini_OAuth2')
+  async loginWithWechatMini(@Body() body: WechatMiniOAuth2Dto) {
+    const { socketId } = body
+
+    const userInfo = await this.authService.loginWithWechatMini(body)
+    this.ws.server.to(socketId).emit('wechatLogin', { state: 2, message: '登录成功', userInfo })
+
+    return { ...body, ...userInfo }
   }
 }

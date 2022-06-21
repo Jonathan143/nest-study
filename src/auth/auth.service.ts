@@ -7,10 +7,12 @@ import {
   AccessConfig,
   AccessTokenInfo,
   WechatError,
-  WechatUserInfo,
+  WechatMiniOAuth2Info, WechatUserInfo,
 } from './auth.interface'
+import { WechatMiniQRCodeCreateDto } from './dto/wechat-login.dto'
 import { User } from '@/user/entities/user.entity'
 import { UserService } from '@/user/user.service'
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -20,6 +22,7 @@ export class AuthService {
   ) {}
 
   private accessTokenInfo: AccessTokenInfo
+  private miniAccessTokenInfo: AccessTokenInfo
   public apiServer = 'https://api.weixin.qq.com'
 
   createToken(user: Partial<User>) {
@@ -42,7 +45,7 @@ export class AuthService {
 
     await this.getAccessToken(code)
 
-    const user = await this.getUserByOpenid()
+    const user = await this.getUserByOpenid(this.accessTokenInfo.openid)
     if (!user) {
       // 获取用户信息，注册新用户
       const userInfo: WechatUserInfo = await this.getUserInfo()
@@ -55,8 +58,8 @@ export class AuthService {
     return await this.userService.findOne(user.id)
   }
 
-  async getUserByOpenid() {
-    return await this.userService.findByOpenid(this.accessTokenInfo.openid)
+  async getUserByOpenid(openid: string) {
+    return await this.userService.findByOpenid(openid)
   }
 
   async getUserInfo() {
@@ -86,23 +89,23 @@ export class AuthService {
       || (this.accessTokenInfo && this.isExpires(this.accessTokenInfo))
     ) {
       // 请求accessToken数据
-      const res: AxiosResponse<WechatError & AccessConfig, any>
+      const { data }: AxiosResponse<WechatError & AccessConfig, any>
         = await lastValueFrom(
           this.httpService.get(
             `${this.apiServer}/sns/oauth2/access_token?appid=${APPID}&secret=${APPSECRET}&code=${code}&grant_type=authorization_code`,
           ),
         )
 
-      if (res.data.errcode) {
+      if (data.errcode) {
         throw new BadRequestException(
-          `[getAccessToken] errcode:${res.data.errcode}, errmsg:${res.data.errmsg}`,
+          `[getAccessToken] errcode:${data.errcode}, errmsg:${data.errmsg}`,
         )
       }
       this.accessTokenInfo = {
-        accessToken: res.data.access_token,
-        expiresIn: res.data.expires_in,
+        accessToken: data.access_token,
+        expiresIn: data.expires_in,
         getTime: Date.now(),
-        openid: res.data.openid,
+        openid: data.openid,
       }
     }
 
@@ -122,11 +125,64 @@ export class AuthService {
 
     if (data.errcode) {
       throw new BadRequestException(
-        `[getAccessToken] errcode:${data.errcode}, errmsg:${data.errmsg}`,
+        `[code2Session] errcode:${data.errcode}, errmsg:${data.errmsg}`,
       )
     }
+    let user = {}
+    if (data.openid)
+      user = await this.getUserByOpenid(data.openid)
 
-    return data
+    return { ...data, ...user }
+  }
+
+  /** 获取小程序 access token */
+  async getMiniAccessToken() {
+    if (!this.miniAccessTokenInfo || (this.miniAccessTokenInfo && this.isExpires(this.miniAccessTokenInfo))) {
+      const { MINI_APPID, MINI_APPSECRET } = process.env
+      const { data }: AxiosResponse<WechatError & AccessConfig, any> = await lastValueFrom(
+        this.httpService.get(
+          `${this.apiServer}/cgi-bin/token?grant_type=client_credential&appid=${MINI_APPID}&secret=${MINI_APPSECRET}`,
+        ),
+      )
+
+      if (data.errcode) {
+        throw new BadRequestException(
+          `[getAccessToken] errcode:${data.errcode}, errmsg:${data.errmsg}`,
+        )
+      }
+
+      this.miniAccessTokenInfo = {
+        accessToken: data.access_token,
+        expiresIn: data.expires_in,
+        getTime: Date.now(),
+        openid: data.openid,
+      }
+    }
+
+    return this.miniAccessTokenInfo.accessToken
+  }
+
+  /** 获取 小程序二维码 */
+  async getUnlimitedMiniQRCode({ scene, page, envVersion }: WechatMiniQRCodeCreateDto) {
+    const accessToken = await this.getMiniAccessToken()
+
+    const { data }: AxiosResponse<WechatError & AccessConfig, any> = await lastValueFrom(
+      this.httpService.post(
+        `${this.apiServer}/wxa/getwxacodeunlimit?access_token=${accessToken}`,
+        { scene, page, env_version: envVersion },
+        { headers: { 'Content-Type': 'application/json; charset=UTF-8' }, responseType: 'arraybuffer' },
+      ),
+    )
+
+    return `data:image/png;base64,${(data as unknown as Buffer).toString('base64')}`
+  }
+
+  async loginWithWechatMini({ openid, avatar, nickname }: WechatMiniOAuth2Info) {
+    const user = await this.getUserByOpenid(openid)
+    if (!user)
+      return this.userService.registerByWechat({ openid, headimgurl: avatar, nickname })
+
+    return this.login(user)
   }
 
   isExpires(access) {
