@@ -5,6 +5,7 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common'
+import { HttpModule } from '@nestjs/axios'
 import { PostsEntity } from './posts.entity'
 import { PostsController } from './posts.controller'
 import { PostsService } from './posts.service'
@@ -18,6 +19,7 @@ import { CategoryModule } from '@/category/category.module'
     TypeOrmModule.forFeature([PostsEntity]),
     CategoryModule,
     TagModule,
+    HttpModule,
     AuthModule,
   ],
   controllers: [PostsController],

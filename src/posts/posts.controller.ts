@@ -11,14 +11,15 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common'
+import { NestCacheApi } from 'nest-redis-cache'
 import { PostsService } from './posts.service'
-import { CreatePostDto, PostsRo } from './dto/post.dto'
+import { CreatePostDto, PostsRo, TheMovieDBDto } from './dto/post.dto'
 import { NoAuth, Roles } from '@/core/decorator/customize'
 
 @ApiTags('文章')
 @Controller('post')
 export class PostsController {
-  constructor(private readonly postsService: PostsService) {}
+  constructor(private readonly postsService: PostsService) { }
 
   /**
    * 创建文章
@@ -32,6 +33,23 @@ export class PostsController {
   }
 
   /**
+   * the movie db
+   * @param body
+   * @returns
+   */
+  @ApiOperation({ summary: 'the movie db' })
+  @NoAuth()
+  @NestCacheApi({
+    exSecond: 6 * 60 * 60,
+    key: '',
+    formatKey: (key, request) => (`movie_db_${request.body?.api || key}_${request.body?.params?.page || ''}`),
+  })
+  @Post('/movie_db')
+  async getMovieDB(@Body() body: TheMovieDBDto) {
+    return await this.postsService.theMovieDBApi(body)
+  }
+
+  /**
    * 获取所有文章
    */
   @ApiOperation({ summary: '获取文章列表' })
@@ -39,8 +57,8 @@ export class PostsController {
   @Get('/list')
   async findAll(
     @Query() query,
-      @Query('pageSize') pageSize: number,
-      @Query('pageNum') pageNum: number,
+    @Query('pageSize') pageSize: number,
+    @Query('pageNum') pageNum: number,
   ): Promise<PostsRo> {
     return await this.postsService.findAll(query)
   }

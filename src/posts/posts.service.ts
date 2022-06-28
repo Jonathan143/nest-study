@@ -1,7 +1,9 @@
-import { count } from 'console'
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository, getRepository } from 'typeorm'
+import { Repository } from 'typeorm'
+import { AxiosResponse } from 'axios'
+import { HttpService } from '@nestjs/axios'
+import { lastValueFrom } from 'rxjs'
 import { CategoryService } from './../category/category.service'
 import { CreatePostDto, PostInfoDto, PostsRo } from './dto/post.dto'
 import { PostsEntity } from './posts.entity'
@@ -9,12 +11,15 @@ import { TagService } from './../tag/tag.service'
 
 @Injectable()
 export class PostsService {
+  moveDBApiKey = process.env.THE_MOVIE_DB_APIKEY
+
   constructor(
     @InjectRepository(PostsEntity)
     private readonly postsRepository: Repository<PostsEntity>,
     private readonly categoryService: CategoryService,
     private readonly tagService: TagService,
-  ) {}
+    private httpService: HttpService,
+  ) { }
 
   async create(user, post: CreatePostDto): Promise<number> {
     const { title } = post
@@ -159,5 +164,18 @@ export class PostsService {
       throw new HttpException(`id为${id}的文章不存在`, HttpStatus.BAD_REQUEST)
 
     return await this.postsRepository.remove(existPost)
+  }
+
+  async theMovieDBApi({ api, params = {} }) {
+    const { data }: AxiosResponse<any, any> = await lastValueFrom(
+      this.httpService.request(
+        {
+          url: `https://api.themoviedb.org/3${api}`,
+          params: { language: 'zh', include_image_language: 'zh,null', ...params },
+          headers: { 'Content-Type': 'application/json; charset=UTF-8', 'Authorization': `Bearer ${this.moveDBApiKey}` },
+        },
+      ),
+    )
+    return data
   }
 }

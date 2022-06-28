@@ -6,7 +6,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { NestCacheApi } from 'nest-redis-cache'
-import { arrayNotEmpty } from 'class-validator'
 import { CosService } from './cos.service'
 import { RefreshCDNCacheDTO } from './dto/refresh-cdn-cache.dto'
 import { CDNDomainsDTO } from './dto/cdn-domains.dto'
@@ -15,7 +14,7 @@ import { NoAuth } from '@/core/decorator/customize'
 @ApiTags('cos')
 @Controller('cos')
 export class CosController {
-  constructor(private readonly cosService: CosService) {}
+  constructor(private readonly cosService: CosService) { }
 
   @Get('auth')
   @ApiBearerAuth()
@@ -25,7 +24,7 @@ export class CosController {
     formatKey: (key, request) => (`cos_auth_${request.query?.bucket || key}`),
   })
   @ApiOperation({ summary: '获取COS临时密钥' })
-  getAuthorization(@Query('bucket')bucket: string) {
+  getAuthorization(@Query('bucket') bucket: string) {
     return this.cosService.getAuthorization({ bucket })
   }
 

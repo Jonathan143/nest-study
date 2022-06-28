@@ -48,3 +48,9 @@ export interface PostsRo {
   list: PostInfoDto[]
   count: number
 }
+
+export class TheMovieDBDto {
+  @ApiProperty({ description: 'api' })
+  @IsNotEmpty({ message: 'api名不能为空' })
+  api: string
+}
