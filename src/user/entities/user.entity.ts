@@ -1,6 +1,7 @@
 import { Exclude } from 'class-transformer'
 import {
   BeforeInsert,
+  BeforeUpdate,
   Column,
   Entity,
   OneToMany,
