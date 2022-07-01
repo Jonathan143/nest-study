@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Post,
@@ -8,23 +9,25 @@ import {
 } from '@nestjs/common'
 import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { FileInterceptor } from '@nestjs/platform-express'
+import { AxiosRequestConfig } from 'axios'
 import { AppService } from './app.service'
 
-export const ApiFile
-  = (fileName = 'file'): MethodDecorator =>
-    (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-      ApiBody({
-        schema: {
-          type: 'object',
-          properties: {
-            [fileName]: {
-              type: 'string',
-              format: 'binary',
-            },
+export const ApiFile =
+  (fileName = 'file'): MethodDecorator =>
+  (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+    ApiBody({
+      schema: {
+        type: 'object',
+        properties: {
+          [fileName]: {
+            type: 'string',
+            format: 'binary',
           },
         },
-      })(target, propertyKey, descriptor)
-    }
+      },
+    })(target, propertyKey, descriptor)
+  }
+
 @ApiTags('公共接口')
 @Controller('app')
 export class AppController {
@@ -42,5 +45,11 @@ export class AppController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(@UploadedFile('file') file: any): Promise<any> {
     console.log('0000', file)
+  }
+
+  @Post('proxy')
+  @ApiOperation({ summary: '接口代理' })
+  async proxy(@Body() body: AxiosRequestConfig): Promise<any> {
+    return this.appService.proxy(body)
   }
 }

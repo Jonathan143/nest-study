@@ -3,6 +3,7 @@ import { APP_GUARD } from '@nestjs/core'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { NestApiCacheModule } from 'nest-redis-cache'
+import { HttpModule } from '@nestjs/axios'
 import envConfig from '../config/env'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
@@ -18,7 +19,11 @@ import { RolesGuard } from '@/auth/guard/role.guard'
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, cache: true, envFilePath: [envConfig.path] }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      cache: true,
+      envFilePath: [envConfig.path],
+    }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
@@ -45,6 +50,7 @@ import { RolesGuard } from '@/auth/guard/role.guard'
       },
       redisEXSecond: 60,
     }),
+    HttpModule,
     PostsModule,
     UserModule,
     AuthModule,
@@ -66,5 +72,4 @@ import { RolesGuard } from '@/auth/guard/role.guard'
     },
   ],
 })
-
 export class AppModule {}
