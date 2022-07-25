@@ -4,7 +4,7 @@ import { CosService } from './cos.service'
 describe('CosService', () => {
   let service: CosService
 
-  beforeEach(async() => {
+  beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [CosService],
     }).compile()

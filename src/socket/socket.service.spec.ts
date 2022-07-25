@@ -4,7 +4,7 @@ import { SocketService } from './socket.service'
 describe('SocketService', () => {
   let service: SocketService
 
-  beforeEach(async() => {
+  beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [SocketService],
     }).compile()

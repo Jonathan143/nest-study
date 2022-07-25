@@ -6,6 +6,7 @@
     "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/consistent-type-imports": "off",
     "@typescript-eslint/indent": "off",
-    "operator-linebreak": "off"
+    "operator-linebreak": "off",
+    "@typescript-eslint/brace-style": "off"
   }
 }

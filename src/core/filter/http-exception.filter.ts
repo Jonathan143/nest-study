@@ -3,10 +3,13 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
+  Logger,
 } from '@nestjs/common'
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger()
+
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp() // 获取请求上下文
     const response = ctx.getResponse() // 获取请求上下文中的 response对象
@@ -15,8 +18,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
     let validMessage = ''
 
     if (typeof exceptionResponse === 'object') {
-      validMessage
-        = typeof exceptionResponse.message === 'string'
+      validMessage =
+        typeof exceptionResponse.message === 'string'
           ? exceptionResponse.message
           : exceptionResponse.message[0]
     }
@@ -28,6 +31,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
       message: validMessage || message,
       code: -1,
     }
+
+    this.logger.warn(`${ctx.getRequest().url} - ${message}`, '非正常接口请求')
 
     // 设置返回的状态码， 请求头，发送错误信息
     response.status(status)

@@ -4,7 +4,7 @@ import { CategoryController } from './category.controller'
 describe('CategoryController', () => {
   let controller: CategoryController
 
-  beforeEach(async() => {
+  beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CategoryController],
     }).compile()

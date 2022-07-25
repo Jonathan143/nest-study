@@ -1,17 +1,21 @@
-import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets'
+import {
+  ConnectedSocket,
+  MessageBody,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets'
 import WebSocket from 'ws'
 import { Socket } from 'socket.io'
 import { SocketService } from './socket.service'
 
-@WebSocketGateway()
+@WebSocketGateway({ cors: true })
 export class SocketGateway {
-  constructor(
-    private readonly SocketService: SocketService,
-  ) {}
+  constructor(private readonly SocketService: SocketService) {}
 
   // 供其它模块调用
   @WebSocketServer()
-    server: Socket
+  server: Socket
 
   clientIdList: string[] = []
 

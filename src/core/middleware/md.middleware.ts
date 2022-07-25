@@ -17,8 +17,7 @@ export class MDMiddleware implements NestMiddleware {
         const html = converter.makeHtml(content)
         req.body.contentHtml = html
         req.body.summary = toText(html)
-      }
-      catch (error) {
+      } catch (error) {
         throw new BadRequestException('markdown 格式错误')
       }
     }
@@ -42,7 +41,7 @@ function getToc(html: string) {
   const hArr = []
   let highestLvl
   let count = 0
-  $('h1, h2, h3, h4, h5, h6').each(function() {
+  $('h1, h2, h3, h4, h5, h6').each(function () {
     const id = `h${count}`
     count++
     $(this).attr('id', id)
@@ -74,8 +73,7 @@ function toTree(flatArr) {
 
       // 改变收集器为当前级别的子集
       collector = item.children
-    }
-    else {
+    } else {
       const topStack = stack[stack.length - 1]
 
       if (topStack.hLevel >= item.hLevel) {
